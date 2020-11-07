@@ -22,9 +22,9 @@ SSH:
       
 - Activate the virtual environment by going to directory in command line
 
-folder>venv\scripts\activate
+      folder>venv\scripts\activate
 
--Once your virtual environment is activated, run this command in the command prompt to install all the libraries and dependencies required for this project.
+- Once your virtual environment is activated, run this command in the command prompt to install all the libraries and dependencies required for this project.
 
       pip install -r requirements.txt 
       
