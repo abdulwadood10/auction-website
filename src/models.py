@@ -19,8 +19,7 @@ class User(db.Model,UserMixin):
 
     @staticmethod
     def get_emails():
-        emails = [x for x, in db.session.query(User.email)]
-        return emails
+        return [x for x, in db.session.query(User.email)]
 
 
     def __repr__(self):

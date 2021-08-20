@@ -23,10 +23,7 @@ def home():
 
     bids_length = len(total_bids)
     sorted_list = sorted(total_bids)
-    if len(sorted_list) == 1:
-        closest_bid = sorted_list[0]
-    else:
-        closest_bid = sorted_list[::-1][1]
+    closest_bid = sorted_list[0] if len(sorted_list) == 1 else sorted_list[::-1][1]
     highest_bid = max(total_bids)
 
 
@@ -131,10 +128,7 @@ def categories(category_name):
             total_bids.append(bid.bid_price)
     bids_length = len(total_bids)
     sorted_list = sorted(total_bids)
-    if len(sorted_list) == 1:
-        closest_bid = sorted_list[0]
-    else:
-        closest_bid = sorted_list[::-1][1]
+    closest_bid = sorted_list[0] if len(sorted_list) == 1 else sorted_list[::-1][1]
     highest_bid = max(total_bids)
     return render_template('categories.html', title=category_name, bids_length=bids_length,category=category, image_num=1,highest_bid = highest_bid,closest_bid=closest_bid)
 
@@ -160,10 +154,7 @@ def bid(item_id):
     print(total_bids)
     bids_length = len(total_bids)
     sorted_list = sorted(total_bids)
-    if len(sorted_list) == 1:
-        closest_bid = sorted_list[0]
-    else:
-        closest_bid = sorted_list[::-1][1]
+    closest_bid = sorted_list[0] if len(sorted_list) == 1 else sorted_list[::-1][1]
     highest_bid = max(total_bids)
     bid_form = BidForm()
 
@@ -178,18 +169,13 @@ def bid(item_id):
         print('bid form')
         if bid_form.bidPrice.data < highest_bid:
             flash('You are bidding less than the highest bid. Bid greater than highest bid.')
-            return redirect(url_for('bid',item_id=item_id))
         else:
             bid = Bid(bid_price=bid_form.bidPrice.data,item_id=item_id,user_name=current_user.username)
 
             db.session.add(bid)
 
             db.session.commit()
-            return redirect(url_for('bid',item_id=item_id))
-
-
-
-
+        return redirect(url_for('bid',item_id=item_id))
     return  render_template('bid.html', title='My bids', items=items,bids_length=bids_length,highest_bid=highest_bid,closest_bid=closest_bid,bid_form=bid_form)
 
 
@@ -205,9 +191,7 @@ def myitems():
 @login_required
 def mybids():
     bids = Bid.query.filter_by(user_name=current_user.username)
-    itemIds = []
-    for bid in bids:
-        itemIds.append(bid.item_id)
+    itemIds = [bid.item_id for bid in bids]
     items = Item.query.filter(Item.id.in_(itemIds)).all()
     return render_template('myitems.html', title='My Items',items=items)
 
@@ -226,9 +210,7 @@ def addwatch(item_id):
 @login_required
 def watchlist():
     watched = WatchList.query.filter_by(user_id=current_user.id)
-    itemWatch = []
-    for watch in watched:
-        itemWatch.append(watch.item_id)
+    itemWatch = [watch.item_id for watch in watched]
     items = Item.query.filter(Item.id.in_(itemWatch)).all()
     return render_template('watchlist.html', title='My WatchList',items=items)
 
@@ -249,9 +231,6 @@ def removeitem(item_id):
 @login_required
 def itemstatus(item_id):
     item = Item.query.get_or_404(item_id)
-    if item.status == True:
-        item.status = False
-    else:
-        item.status = True
+    item.status = item.status != True
     db.session.commit()
     return redirect(url_for('myitems'))
